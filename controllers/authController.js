@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const { CustomError, BadRequestError } = require('../errors');
-const { attachCookiesToResponse } = require('../utils');
+const { attachCookiesToResponse, createTokenUser } = require('../utils');
 
 const login = async (req, res) => {
   //	check if email exist
@@ -18,7 +18,7 @@ const login = async (req, res) => {
   if (!isPasswordCorrect) {
     throw new BadRequestError('Password is not correct !');
   }
-  const tokenUser = { userId: user._id, name: user.name, role: user.role };
+  const tokenUser = createTokenUser(user);
   await attachCookiesToResponse({ res, user: tokenUser });
 
   res.status(200).json({ user: tokenUser });
@@ -48,7 +48,7 @@ const register = async (req, res) => {
   const user = await User.create({ email, name, password, role });
 
   //	create token
-  const tokenUser = { userId: user._id, name: user.name, role: user.role };
+  const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(201).json({ user: tokenUser });
 };

@@ -6,10 +6,13 @@ const app = express();
 //	routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 //	packages
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
 //	db
 const connectDB = require('./db/connect');
 
@@ -22,6 +25,7 @@ app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(express.static('./public'));
 app.use(cors());
+app.use(fileUpload());
 
 //	router
 app.get('/api/v1', (req, res) => {
@@ -30,8 +34,11 @@ app.get('/api/v1', (req, res) => {
 
   res.send('Cookie');
 });
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

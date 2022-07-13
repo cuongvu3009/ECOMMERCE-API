@@ -1,5 +1,5 @@
 const { isTokenValid } = require('../utils');
-const { UnauthenticatedError } = require('../errors');
+const { UnauthenticatedError, UnauthorizedError } = require('../errors');
 
 const authenticateUser = async (req, res, next) => {
   const token = req.signedCookies.token;
@@ -17,4 +17,12 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-module.exports = authenticateUser;
+const authorizedPermission = async (req, res, next) => {
+  if (req.user.role === 'user') {
+    throw new UnauthorizedError('You are not allow to do this!');
+  }
+
+  next();
+};
+
+module.exports = { authenticateUser, authorizedPermission };
